@@ -189,6 +189,7 @@ def send():
         remote_port = int(sys.argv[3])
         ack_port_num = int(sys.argv[4])
         log_file = sys.argv[5]
+        print remote_IP
         if "." in remote_IP:
             version = 4
         elif ":" in remote_IP:
