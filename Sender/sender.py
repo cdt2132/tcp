@@ -28,26 +28,49 @@ def getSize(fileobject):
 
 def init(remote_IP, remote_port, host, ack_port_num, filename):
     if "." in remote_IP:
-        ip = 4
-    try:
-        send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        print "Send Socket Created"
-    except socket.error:
-        print "Unable to create send socket"
-    serverAddress = (remote_IP, remote_port)
-    try:
-        send_sock.connect(serverAddress)
-    except:
-        print "Unable to connect to serverAdress"
-
-    try:
-        ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    except socket.error:
-        print "Unable to create ack socket"
-    try:
-        ack_sock.bind((host, ack_port_num))
-    except socket.error:
-        print "Unable to bind to ack socket"
+        version =4
+    elif ":" in remote_IP:
+        version = 6
+    if version == 4:
+        try:
+            send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            print "Send Socket Created"
+        except socket.error:
+            print "Unable to create send socket"
+        serverAddress = (remote_IP, remote_port)
+        try:
+            send_sock.connect(serverAddress)
+        except socket.error:
+            print "Unable to connect to serverAddress"
+    elif version == 6:
+        try:
+            send_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+            print "Send Socket Created"
+        except socket.error:
+            print "Unable to create send socket"
+        serverAddress = (remote_IP, remote_port)
+        try:
+            send_sock.connect(serverAddress)
+        except socket.error:
+            print "Unable to connect to serverAddress"
+    if version == 4:
+        try:
+            ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        except socket.error:
+            print "Unable to create ack socket"
+        try:
+            ack_sock.bind((host, ack_port_num))
+        except socket.error:
+            print "Unable to bind to ack socket"
+    elif version == 6:
+        try:
+            ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+        except socket.error:
+            print "Unable to create ack socket"
+        try:
+            ack_sock.bind((host, ack_port_num))
+        except socket.error:
+            print "Unable to bind to ack socket"
 
     try:
         f = open(filename, 'r')
