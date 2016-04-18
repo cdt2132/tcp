@@ -11,7 +11,7 @@ import select
 import time
 
 def receive():
-    host = ''
+    host = 'localhost'
     filename = sys.argv[1]
     port = int(sys.argv[2])
     sender_IP = sys.argv[3]
@@ -46,11 +46,18 @@ def receive():
         except socket.error:
            print "Bind failed"
 
-        try:
-            ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            print "Send Socket Created"
-        except socket.error:
-            print "Unable to create send socket"
+        if version == 4:
+            try:
+                ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                print "Send Socket Created"
+            except socket.error:
+                print "Unable to create send socket"
+        else:
+            try:
+                ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+                print "Send Socket Created"
+            except socket.error:
+                print "Unable to create send socket"
         serverAddress = (sender_IP, sender_port)
         try:
             ack_sock.connect(serverAddress)
