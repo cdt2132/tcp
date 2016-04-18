@@ -20,7 +20,6 @@ def receive():
     else:
         version = 6
         host = '::1'
-        print version
     sender_port = int(sys.argv[4])
     log = sys.argv[5]
     if log != "stdout":
