@@ -19,6 +19,9 @@ def receive():
         version = 4
     else:
         version = 6
+        addrs = socket.getaddrinfo("localhost", port, socket.AF_INET6, 0, socket.SOL_TCP)
+        entry0 = addrs[0]
+        host = entry0[-1]
     print version
     sender_port = int(sys.argv[4])
     log = sys.argv[5]
