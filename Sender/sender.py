@@ -20,19 +20,13 @@ global spl_rtt
 global dev_rtt
 import select
 global seg
-global host
 
 def getSize(fileobject):
     fileobject.seek(0,2)
     size = fileobject.tell()
     return size
 
-def init(remote_IP, remote_port, host, ack_port_num, filename):
-    global host
-    if "." in remote_IP:
-        version =4
-    elif ":" in remote_IP:
-        version = 6
+def init(remote_IP, remote_port, host, ack_port_num, filename, version):
     if version == 4:
         try:
             send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -177,7 +171,6 @@ def send():
     global dev_rtt
     global last_ack
     global seg
-    global host
     seg = 0
     seq_number = 0
     expected_acks = {}
@@ -196,6 +189,11 @@ def send():
         remote_port = int(sys.argv[3])
         ack_port_num = int(sys.argv[4])
         log_file = sys.argv[5]
+        if "." in remote_IP:
+            version = 4
+        elif ":" in remote_IP:
+            version = 6
+            host = '::1'
         lf = 0
         if log_file != "stdout":
             lf = open(log_file, "w")
@@ -203,7 +201,7 @@ def send():
             window_size = float(sys.argv[6])
         else:
             window_size = 1
-        send_sock, ack_sock, f, size = init(remote_IP, remote_port, host, ack_port_num, filename)
+        send_sock, ack_sock, f, size = init(remote_IP, remote_port, host, ack_port_num, filename, version)
         waitAck = False
         while waitAck == False:
             copy_acks = dict(expected_acks)
