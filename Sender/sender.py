@@ -20,6 +20,7 @@ global spl_rtt
 global dev_rtt
 import select
 global seg
+global host
 
 def getSize(fileobject):
     fileobject.seek(0,2)
@@ -27,6 +28,7 @@ def getSize(fileobject):
     return size
 
 def init(remote_IP, remote_port, host, ack_port_num, filename):
+    global host
     if "." in remote_IP:
         version =4
     elif ":" in remote_IP:
@@ -43,6 +45,7 @@ def init(remote_IP, remote_port, host, ack_port_num, filename):
         except socket.error:
             print "Unable to connect to serverAddress"
     elif version == 6:
+        host = '::1'
         try:
             send_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
             print "Send Socket Created"
@@ -174,6 +177,7 @@ def send():
     global dev_rtt
     global last_ack
     global seg
+    global host
     seg = 0
     seq_number = 0
     expected_acks = {}
