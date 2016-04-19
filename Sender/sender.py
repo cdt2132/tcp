@@ -8,10 +8,9 @@ import os
 import header
 import checkAck
 import threading
+#import statements
 global seq_number
 global expected_acks
-import datetime as dt
-expected_acks = {}
 global timeout_window
 import time
 global last_ack
@@ -20,6 +19,9 @@ global spl_rtt
 global dev_rtt
 import select
 global seg
+#global variables
+expected_acks = {}
+
 
 def getSize(fileobject):
     fileobject.seek(0,2)
@@ -36,21 +38,6 @@ def init(remote_IP, remote_port, host, ack_port_num, filename, version):
         serverAddress = (remote_IP, remote_port)
         try:
             send_sock.connect(serverAddress)
-        except socket.error:
-            print "Unable to connect to serverAddress"
-    elif version == 6:
-        host = '::1'
-        try:
-            send_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
-            print "Send Socket Created"
-        except socket.error:
-            print "Unable to create send socket"
-        serverAddress = (remote_IP, remote_port)
-        try:
-            send_sock.connect(serverAddress)
-        except socket.error:
-            print "Unable to connect to serverAddress"
-    if version == 4:
         try:
             ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         except socket.error:
@@ -59,9 +46,22 @@ def init(remote_IP, remote_port, host, ack_port_num, filename, version):
             ack_sock.bind((host, ack_port_num))
         except socket.error:
             print "Unable to bind to ack socket"
+        except socket.error:
+            print "Unable to connect to serverAddress"
     elif version == 6:
+        host = '::1'
         try:
-            ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+            send_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
+            print "Send Socket Created"
+        except socket.error:
+            print "Unable to create send socket"
+        serverAddress = (remote_IP, remote_port,0,0)
+        try:
+            send_sock.connect(serverAddress)
+        except socket.error:
+            print "Unable to connect to serverAddress"
+        try:
+            ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
         except socket.error:
             print "Unable to create ack socket"
         try:
@@ -215,6 +215,7 @@ def send():
                     try:
                         packet = expected_acks[m][0]
                         send_sock.send(packet)
+                        seg = seg + 1
                         re_sent = re_sent + 1
                         seq_number = int(m) - 1
                         #expected_acks.clear()
@@ -277,6 +278,8 @@ def send():
         print "Segments retransmitted = %f %%" %rt
         if lf != 0:
             lf.close()
+        send_sock.close()
+        ack_sock.close()
         os._exit(0)
 
 
