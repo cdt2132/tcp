@@ -11,7 +11,7 @@ import select
 import time
 
 def receive():
-    host = 'localhost'
+    host = ''
     filename = sys.argv[1]
     port = int(sys.argv[2])
     sender_IP = sys.argv[3]
@@ -20,7 +20,7 @@ def receive():
     else:
         version = 6
         host = '::1'
-    sender_port = int(sys.argv[4])
+	sender_port = int(sys.argv[4])
     log = sys.argv[5]
     if log != "stdout":
         log_f = open(log, "w")
@@ -37,7 +37,7 @@ def receive():
                 print "Failed to create socket"
         else:
             try:
-                sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+                sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
             except socket.error:
                 print "Failed to create socket"
 
@@ -52,17 +52,19 @@ def receive():
                 print "Send Socket Created"
             except socket.error:
                 print "Unable to create send socket"
+			try: 
+					serverAddress = (sender_IP, sender_port)
+					ack_sock.connect(serverAddress)
         else:
             try:
-                ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+                ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
                 print "Send Socket Created"
             except socket.error:
                 print "Unable to create send socket"
-        serverAddress = (sender_IP, sender_port)
-        try:
-            ack_sock.connect(serverAddress)
-        except:
-            print "Unable to connect to serverAdress"
+        	try:
+            	ack_sock.connect(sender_IP, sender_port, 0,0)
+        	except:
+            	print "Unable to connect to serverAdress"
 
         print "Serving on port %s" %port
         done = False
