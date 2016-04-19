@@ -38,6 +38,8 @@ def init(remote_IP, remote_port, host, ack_port_num, filename, version):
         serverAddress = (remote_IP, remote_port)
         try:
             send_sock.connect(serverAddress)
+        except socket.error:
+            print "Unable to connect"
         try:
             ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         except socket.error:
