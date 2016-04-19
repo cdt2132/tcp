@@ -15,13 +15,13 @@ def receive():
     filename = sys.argv[1]
     port = int(sys.argv[2])
     sender_IP = sys.argv[3]
+    sender_port = int(sys.argv[4])
+    log = sys.argv[5]
     if "." in str(sender_IP):
         version = 4
     else:
         version = 6
         host = '::1'
-	sender_port = int(sys.argv[4])
-    log = sys.argv[5]
     if log != "stdout":
         log_f = open(log, "w")
     ex_seq = 0
@@ -52,9 +52,11 @@ def receive():
                 print "Send Socket Created"
             except socket.error:
                 print "Unable to create send socket"
-			try: 
-					serverAddress = (sender_IP, sender_port)
-					ack_sock.connect(serverAddress)
+            try:
+				serverAddress = (sender_IP, sender_port)
+				ack_sock.connect(serverAddress)
+            except socket.error:
+                print "Unable to connect to send socket"
         else:
             try:
                 ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
@@ -62,9 +64,9 @@ def receive():
             except socket.error:
                 print "Unable to create send socket"
         	try:
-            	ack_sock.connect(sender_IP, sender_port, 0,0)
+                    ack_sock.connect(sender_IP, sender_port, 0,0)
         	except:
-            	print "Unable to connect to serverAdress"
+                    print "Unable to connect to serverAdress"
 
         print "Serving on port %s" %port
         done = False
