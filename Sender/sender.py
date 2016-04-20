@@ -44,7 +44,7 @@ def init(remote_IP, remote_port, host, ack_port_num, filename, version):
         elif version == 6:
             host = '::1'
             try:
-                send_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
+                send_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,-17)
                 print "Send Socket Created"
             except socket.error:
                 print "Unable to create send socket"
@@ -63,7 +63,7 @@ def init(remote_IP, remote_port, host, ack_port_num, filename, version):
                 print "Unable to bind to ack socket"
         elif version == 6:
             try:
-                ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
+                ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,-17)
             except socket.error:
                 print "Unable to create ack socket"
             try:

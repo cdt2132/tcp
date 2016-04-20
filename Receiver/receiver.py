@@ -37,7 +37,7 @@ def receive():
                 print "Failed to create socket"
         else:
             try:
-                sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
+                sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,-17)
             except socket.error:
                 print "Failed to create socket"
 
@@ -59,7 +59,7 @@ def receive():
                 print "Unable to connect to send socket"
         else:
             try:
-                ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
+                ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,-17)
                 print "Send Socket Created"
             except socket.error:
                 print "Unable to create send socket"
