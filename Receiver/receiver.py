@@ -42,7 +42,7 @@ def receive():
         elif version == 6:
             try:
                 ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, 0)
-                print "Ack socket created"
+                print "Ack socket created (6)"
             except socket.error:
                 print "Unable to create socket"
             try:
