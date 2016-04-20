@@ -59,7 +59,7 @@ def init(remote_IP, remote_port, host, ack_port_num, filename, version):
             except socket.error:
                 print "Unable to create ack socket"
             try:
-                ack_sock.bind((host, ack_port_num))
+                ack_sock.bind(('', ack_port_num))
             except socket.error:
                 print "Unable to bind to ack socket"
         elif version == 6:
@@ -68,7 +68,7 @@ def init(remote_IP, remote_port, host, ack_port_num, filename, version):
             except socket.error:
                 print "Unable to create ack socket"
             try:
-                ack_sock.bind((host, ack_port_num))
+                ack_sock.bind(('', ack_port_num))
             except socket.error:
                 print "Unable to bind to ack socket"
 
