@@ -30,43 +30,45 @@ def receive():
     try:
         if version == 4:
             try:
-                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                print "Listening Socket Created"
+                ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                print "Ack Socket Created"
             except socket.error:
-                print "Failed to create socket"
-        else:
+                print "Unable to create send socket"
+            serverAddress = (sender_IP, sender_port)
             try:
-                sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
+                ack_sock.connect(serverAddress)
             except socket.error:
-                print "Failed to create socket"
-
-        try:
-				sock.bind(('', port))
-        except socket.error:
-           print "Bind failed"
-
+                print "Unable to connect to serverAddress"
+        elif version == 6:
+            try:
+                ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, 0)
+                print "Ack socket created"
+            except socket.error:
+                print "Unable to create socket"
+            try:
+                addr = (sender_IP, sender_port, 0, 0)
+                ack_sock.connect(addr)
+            except socket.error:
+                print "Unable to connect to serverAddress"
         if version == 4:
             try:
-                ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                print "Send Socket Created"
+                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             except socket.error:
-                print "Unable to create send socket"
+                print "Unable to create socket"
             try:
-				serverAddress = (sender_IP, sender_port)
-				ack_sock.connect(serverAddress)
+                sock.bind(('', port))
             except socket.error:
-                print "Unable to connect to send socket"
-        else:
+                print "Unable to bind to socket"
+        elif version == 6:
             try:
-                ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
-                print "Send Socket Created"
+                sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, 0)
             except socket.error:
-                print "Unable to create send socket"
-        	try:
-                    serverAddress = (sender_IP, sender_port, 0, 0)
-                    ack_sock.connect(serverAddress)
-        	except:
-                    print "Unable to connect to serverAdress"
+                print "Unable to create socket"
+            try:
+                sock.bind(('', port))
+            except socket.error:
+                print "Unable to bind to socket"
+
 
         print "Serving on port %s" %port
         done = False
