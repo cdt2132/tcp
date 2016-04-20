@@ -17,6 +17,11 @@ def receive():
     sender_IP = sys.argv[3]
     sender_port = int(sys.argv[4])
     log = sys.argv[5]
+    if any(c.isalpha() for c in sender_IP):
+        try:
+            sender_IP = socket.gethostbyname(sender_IP)
+        except:
+            "Print invalid domain"
     if "." in str(sender_IP):
         version = 4
     else:

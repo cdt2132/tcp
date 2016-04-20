@@ -19,17 +19,26 @@ global spl_rtt
 global dev_rtt
 import select
 global seg
+import math
 #global variables
 expected_acks = {}
 
 
-def getSize(fileobject):
+def getSize(fileobject, MSS):
     fileobject.seek(0,2)
     size = fileobject.tell()
-    return size
+    s = int(round(size/MSS))
+    s = s * 20
+    ts = size + int(round(size/MSS))*20
+    return size, ts
 
-def init(remote_IP, remote_port, host, ack_port_num, filename, version):
+def init(remote_IP, remote_port, host, ack_port_num, filename, version, MSS):
     try:
+        if any(c.isalpha() for c in remote_IP):
+            try:
+                remote_IP = socket.gethostbyname(remote_IP)
+            except:
+                "Print invalid domain"
         if version == 4:
             try:
                 send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -77,9 +86,9 @@ def init(remote_IP, remote_port, host, ack_port_num, filename, version):
             err = "File %s Not Found" % filename
             print err
 
-        size = getSize(f)
+        size, ts = getSize(f,MSS)
 
-        return send_sock, ack_sock, f, size
+        return send_sock, ack_sock, f, size, ts
     except KeyboardInterrupt:
         print  'Shutting Down\n'
         try:
@@ -211,7 +220,7 @@ def send():
             window_size = float(sys.argv[6])
         else:
             window_size = 1
-        send_sock, ack_sock, f, size = init(remote_IP, remote_port, host, ack_port_num, filename, version)
+        send_sock, ack_sock, f, size, ts = init(remote_IP, remote_port, host, ack_port_num, filename, version, MSS)
         waitAck = False
         while waitAck == False:
             copy_acks = dict(expected_acks)
@@ -278,7 +287,8 @@ def send():
         print "Entering TIME_WAIT"
         time.sleep(5)
         print "Delivery completed successfully"
-        print "Total bytes sent = %i"%size
+        size = size
+        print "Total bytes sent = %i"%ts
         print "Segments sent = %i"%seg
         print re_sent
         rt = float(float(re_sent) / float(seg))
