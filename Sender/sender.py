@@ -29,56 +29,64 @@ def getSize(fileobject):
     return size
 
 def init(remote_IP, remote_port, host, ack_port_num, filename, version):
-    if version == 4:
-        try:
-            send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            print "Send Socket Created"
-        except socket.error:
-            print "Unable to create send socket"
-        serverAddress = (remote_IP, remote_port)
-        try:
-            send_sock.connect(serverAddress)
-        except socket.error:
-            print "Unable to connect to serverAddress"
-    elif version == 6:
-        host = '::1'
-        try:
-            send_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
-            print "Send Socket Created"
-        except socket.error:
-            print "Unable to create send socket"
-        try:
-            send_sock.connect(remote_IP, remote_port, 0,0)
-        except socket.error:
-            print "Unable to connect to serverAddress"
-    if version == 4:
-        try:
-            ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        except socket.error:
-            print "Unable to create ack socket"
-        try:
-            ack_sock.bind((host, ack_port_num))
-        except socket.error:
-            print "Unable to bind to ack socket"
-    elif version == 6:
-        try:
-            ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
-        except socket.error:
-            print "Unable to create ack socket"
-        try:
-            ack_sock.bind((host, ack_port_num))
-        except socket.error:
-            print "Unable to bind to ack socket"
-
     try:
-        f = open(filename, 'r')
-    except:
-        err = "File %s Not Found" % filename
-        print err
+        if version == 4:
+            try:
+                send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                print "Send Socket Created"
+            except socket.error:
+                print "Unable to create send socket"
+            serverAddress = (remote_IP, remote_port)
+            try:
+                send_sock.connect(serverAddress)
+            except socket.error:
+                print "Unable to connect to serverAddress"
+        elif version == 6:
+            host = '::1'
+            try:
+                send_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
+                print "Send Socket Created"
+            except socket.error:
+                print "Unable to create send socket"
+            try:
+                send_sock.connect(remote_IP, remote_port, 0,0)
+            except socket.error:
+                print "Unable to connect to serverAddress"
+        if version == 4:
+            try:
+                ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            except socket.error:
+                print "Unable to create ack socket"
+            try:
+                ack_sock.bind((host, ack_port_num))
+            except socket.error:
+                print "Unable to bind to ack socket"
+        elif version == 6:
+            try:
+                ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
+            except socket.error:
+                print "Unable to create ack socket"
+            try:
+                ack_sock.bind((host, ack_port_num))
+            except socket.error:
+                print "Unable to bind to ack socket"
 
-    size = getSize(f)
+        try:
+            f = open(filename, 'r')
+        except:
+            err = "File %s Not Found" % filename
+            print err
 
-    return send_sock, ack_sock, f, size
+        size = getSize(f)
+
+        return send_sock, ack_sock, f, size
+    except KeyboardInterrupt:
+        print  'Shutting Down\n'
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
+
 
 def recv_acks(ack_sock, lf, log_file):
     try:
