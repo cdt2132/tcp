@@ -39,16 +39,6 @@ def init(remote_IP, remote_port, host, ack_port_num, filename, version):
         try:
             send_sock.connect(serverAddress)
         except socket.error:
-            print "Unable to connect"
-        try:
-            ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        except socket.error:
-            print "Unable to create ack socket"
-        try:
-            ack_sock.bind((host, ack_port_num))
-        except socket.error:
-            print "Unable to bind to ack socket"
-        except socket.error:
             print "Unable to connect to serverAddress"
     elif version == 6:
         host = '::1'
@@ -57,11 +47,20 @@ def init(remote_IP, remote_port, host, ack_port_num, filename, version):
             print "Send Socket Created"
         except socket.error:
             print "Unable to create send socket"
-        serverAddress = (remote_IP, remote_port,0,0)
         try:
-            send_sock.connect(serverAddress)
+            send_sock.connect(remote_IP, remote_port, 0,0)
         except socket.error:
             print "Unable to connect to serverAddress"
+    if version == 4:
+        try:
+            ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        except socket.error:
+            print "Unable to create ack socket"
+        try:
+            ack_sock.bind((host, ack_port_num))
+        except socket.error:
+            print "Unable to bind to ack socket"
+    elif version == 6:
         try:
             ack_sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM,0)
         except socket.error:
@@ -217,7 +216,6 @@ def send():
                     try:
                         packet = expected_acks[m][0]
                         send_sock.send(packet)
-                        seg = seg + 1
                         re_sent = re_sent + 1
                         seq_number = int(m) - 1
                         #expected_acks.clear()
