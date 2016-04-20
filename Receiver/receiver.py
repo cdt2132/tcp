@@ -63,8 +63,8 @@ def receive():
             except socket.error:
                 print "Unable to create send socket"
         	try:
-                    addr = (sender_IP, sender_port,0,0)
-                    ack_sock.connect(addr)
+                    serverAddress = (sender_IP, sender_port, 0, 0)
+                    ack_sock.connect(serverAddress)
         	except:
                     print "Unable to connect to serverAdress"
 
