@@ -50,7 +50,7 @@ def init(remote_IP, remote_port, host, ack_port_num, filename, version):
                 print "Unable to create send socket"
             try:
                 addr = (remote_IP, remote_port, 0, 0)
-				send_sock.connect(addr)
+                send_sock.connect(addr)
             except socket.error:
                 print "Unable to connect to serverAddress"
         if version == 4:
